@@ -1,4 +1,3 @@
-```markdown
 # 🎮 Lua → SDL2 Graphics Transpiler
 
 **Turn Lua scripts into standalone graphics applications!** Write your graphics in Lua using SVG-like syntax and compile to high-performance SDL2 executables.
@@ -22,7 +21,7 @@
 **Ubuntu/Debian:**
 ```bash
 sudo apt update && sudo apt install -y g++ libsdl2-dev liblua5.4-dev python3 git make
-```
+
 
 **Arch Linux:**
 ```bash
