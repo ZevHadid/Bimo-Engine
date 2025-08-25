@@ -111,6 +111,19 @@ Shape parseSVG(const std::string &svg) {
     return s;
 }
 
+// ---------------------- Lua class binding ----------------------
+class MakeShape {
+public:
+    int id;
+    MakeShape(const std::string& svg) {
+        Shape s = parseSVG(svg);
+        shapes.push_back(s);
+        id = shapes.size()-1;
+    }
+    void show() { shapes[id].visible = true; }
+    void hide() { shapes[id].visible = false; }
+};
+
 // ---------------------- Main ----------------------
 int main() {
     SDL_Init(SDL_INIT_VIDEO);
@@ -120,24 +133,12 @@ int main() {
     sol::state lua;
     lua.open_libraries(sol::lib::base, sol::lib::package);
 
-    // Register a simple function-based API instead of a class
-    lua["create_shape"] = [](const std::string& svg) -> int {
-        Shape s = parseSVG(svg);
-        shapes.push_back(s);
-        return shapes.size() - 1;
-    };
-    
-    lua["show_shape"] = [](int id) {
-        if (id >= 0 && id < shapes.size()) {
-            shapes[id].visible = true;
-        }
-    };
-    
-    lua["hide_shape"] = [](int id) {
-        if (id >= 0 && id < shapes.size()) {
-            shapes[id].visible = false;
-        }
-    };
+    // Register C++ class for Lua - CORRECTED WAY
+    lua.new_usertype<MakeShape>("MakeShape",
+        sol::call_constructor, sol::constructors<MakeShape(const std::string&)>(),
+        "show", &MakeShape::show,
+        "hide", &MakeShape::hide
+    );
 
     // Run Lua script
     try {

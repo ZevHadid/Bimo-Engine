@@ -1,11 +1,20 @@
--- Rectangle
-rect_id = create_shape('<rect x="50" y="50" width="200" height="100" fill="red"/>')
--- Circle
-circle_id = create_shape('<circle cx="400" cy="300" r="50" fill="blue"/>')
+-- Rectangle in the center
+rect = MakeShape('<rect x="300" y="250" width="200" height="100" fill="red"/>')
+-- Circle in the center
+circle = MakeShape('<circle cx="400" cy="300" r="50" fill="blue"/>')
 -- Show shapes
-show_shape(rect_id)
-show_shape(circle_id)
+rect:show()
+circle:show()
 
 -- David's star polygon
-star_id = create_shape('<polygon points="400,100 420,140 460,140 430,170 440,210 400,190 360,210 370,170 340,140 380,140" fill="gold"/>')
-show_shape(star_id)
+star = MakeShape('<polygon points="400,100 420,140 460,140 430,170 440,210 400,190 360,210 370,170 340,140 380,140" fill="gold"/>')
+star:show()
+
+-- Additional shapes
+green_rect = MakeShape('<rect x="100" y="100" width="80" height="80" fill="green"/>')
+green_rect:show()
+
+line = MakeShape('<line x1="50" y1="500" x2="750" y2="500" stroke="red"/>')
+line:show()
+
+print("All shapes created and shown!")
