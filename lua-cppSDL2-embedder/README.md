@@ -36,8 +36,8 @@ brew update && brew install gcc sdl2 lua@5.4 python git
 
 ### 2. Get the Code
 ```bash
-git clone https://github.com/yourusername/lua-sdl2-embedder.git
-cd lua-sdl2-embedder
+git clone https://github.com/ZevHadid/zev-game-maker.git
+cd lua-cppSDL2-embedder
 ```
 
 ### 3. Install sol2 (Header-only Library)
@@ -146,7 +146,7 @@ shape:hide()  -- Hide shape
 ## 📁 Project Structure
 
 ```
-lua-sdl2-embedder/
+lua-cppSDL2-embedder/
 ├── main.cpp              # Main C++ application
 ├── build.sh              # Build script (embeds + compiles)
 ├── script.lua            # Your graphics script (edit this!)
