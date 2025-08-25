@@ -1,15 +1,16 @@
-# 🎮 Lua → SDL2 Graphics Transpiler
+# 🎮 Lua → SDL2 Graphics Embedder
 
-**Turn Lua scripts into standalone graphics applications!** Write your graphics in Lua using SVG-like syntax and compile to high-performance SDL2 executables.
+**Embed Lua scripts directly into high-performance SDL2 applications!** Write your graphics in Lua and compile to standalone native executables with no external dependencies.
 
 ---
 
 ## ✨ Features
 
 - **📝 Lua Scripting**: Write graphics code in simple, clean Lua
+- **⚡ Zero Dependencies**: Lua code embedded directly into executable
 - **🎨 SVG-like Syntax**: Use familiar HTML-like tags: `<rect>`, `<circle>`, `<polygon>`, `<line>`
-- **⚡ Native Performance**: Compiled to optimized C++ with SDL2 backend
-- **📦 Standalone Executables**: Single file output, no dependencies needed
+- **🚀 Native Performance**: Direct C++ compilation with SDL2 backend
+- **📦 Single File Output**: No external files needed to run
 - **🔧 Cross-Platform**: Works on Linux, Windows, and macOS
 
 ---
@@ -20,23 +21,23 @@
 
 **Ubuntu/Debian:**
 ```bash
-sudo apt update && sudo apt install -y g++ libsdl2-dev liblua5.4-dev python3 git make
-
+sudo apt update && sudo apt install -y g++ libsdl2-dev liblua5.4-dev python3 git
+```
 
 **Arch Linux:**
 ```bash
-sudo pacman -Syu --needed gcc sdl2 lua54 python git make
+sudo pacman -Syu --needed gcc sdl2 lua54 python git
 ```
 
 **macOS (Homebrew):**
 ```bash
-brew update && brew install gcc sdl2 lua@5.4 python git make
+brew update && brew install gcc sdl2 lua@5.4 python git
 ```
 
 ### 2. Get the Code
 ```bash
-git clone https://github.com/yourusername/lua-sdl2-transpiler.git
-cd lua-sdl2-transpiler
+git clone https://github.com/yourusername/lua-sdl2-embedder.git
+cd lua-sdl2-embedder
 ```
 
 ### 3. Install sol2 (Header-only Library)
@@ -63,82 +64,112 @@ star:show()
 
 ### 5. Build & Run!
 ```bash
-./build.sh    # Compiles to standalone executable
-./app         # Run your graphics application!
+./build.sh    # Embeds Lua into executable and compiles
+./app         # Run your standalone graphics app!
 ```
 
 ---
 
-## 🛠️ Build Options
+## 🧠 How It Works
 
-**Development Build** (with external script file):
+### Compilation Process:
+1. **Lua Script** → Your graphics code (`script.lua`)
+2. **Build Script** → Embeds Lua code into C++ string (`build.sh`)
+3. **C++ Compilation** → Creates native executable with embedded Lua
+4. **Runtime** → Lua VM executes embedded code calling SDL2 functions
+
+### Architecture:
+```
+[Your Lua Code] → [Build Process] → [C++ Executable with Embedded Lua] → [SDL2 Graphics]
+```
+
+---
+
+## 🛠️ Build System
+
+### Production Build (Recommended):
 ```bash
+./build.sh  # Creates standalone 'app' with embedded Lua
+```
+
+### Manual Build (Development):
+```bash
+# For testing with external script file
 g++ main.cpp -I./sol2/include -I/usr/include/lua5.4 -o dev_app -lSDL2 -llua5.4 -ldl -lm -std=c++17
 ```
 
-**Production Build** (embedded, standalone):
+### The Build Script Magic:
 ```bash
-./build.sh  # Creates self-contained 'app' executable
+#!/bin/bash
+# build.sh - Embeds Lua into C++ and compiles
+
+# 1. Convert Lua to C++ string using Python
+python3 << EOF > embedded_script.h
+# Python code reads script.lua and creates embedded_script.h
+EOF
+
+# 2. Compile with embedded code
+g++ main.cpp -I./sol2/include -I/usr/include/lua5.4 -o app -lSDL2 -llua5.4 -ldl -lm -std=c++17
 ```
 
 ---
 
-## 🎨 Available Shapes
+## 🎨 Available Shapes & Methods
 
-### Rectangle
+### Shapes:
 ```lua
+-- Rectangle
 rect = MakeShape('<rect x="50" y="50" width="200" height="100" fill="red"/>')
-```
 
-### Circle  
-```lua
+-- Circle
 circle = MakeShape('<circle cx="400" cy="300" r="50" fill="blue"/>')
-```
 
-### Line
-```lua
+-- Line
 line = MakeShape('<line x1="50" y1="500" x2="750" y2="500" stroke="green"/>')
-```
 
-### Polygon
-```lua
+-- Polygon
 star = MakeShape('<polygon points="400,100 420,140 460,140 430,170 440,210 400,190 360,210 370,170 340,140 380,140" fill="gold"/>')
 ```
 
-### Colors Supported:
+### Methods:
+```lua
+shape:show()  -- Make shape visible
+shape:hide()  -- Hide shape
+```
+
+### Supported Colors:
 - `red`, `blue`, `green`, `gold`
-- *More colors can be added in parseSVG() function*
+- *Extend by modifying `parseSVG()` in main.cpp*
 
 ---
 
 ## 📁 Project Structure
 
 ```
-lua-sdl2-transpiler/
-├── main.cpp          # Main C++ application
-├── build.sh          # Build script (creates standalone)
-├── script.lua        # Your graphics script (edit this!)
-├── sol2/            # sol2 library (git cloned)
-└── embedded_script.h # Auto-generated (don't edit)
+lua-sdl2-embedder/
+├── main.cpp              # Main C++ application
+├── build.sh              # Build script (embeds + compiles)
+├── script.lua            # Your graphics script (edit this!)
+├── embedded_script.h     # Auto-generated (contains embedded Lua)
+└── sol2/                 # sol2 library (Lua-C++ binding)
 ```
 
 ---
 
 ## 🔧 Advanced Usage
 
-### Adding New Colors
-Edit the `parseSVG()` function in `main.cpp` to add more color support:
+### Adding New Colors:
+Edit the `parseSVG()` function in `main.cpp`:
 
 ```cpp
 if(color == "purple") s.r_col=128, s.g_col=0, s.b_col=128;
 if(color == "orange") s.r_col=255, s.g_col=165, s.b_col=0;
 ```
 
-### Custom Build Flags
-Modify `build.sh` for custom compilation:
+### Custom Build Optimization:
+Modify `build.sh` for maximum performance:
 
 ```bash
-# Add optimization flags
 g++ main.cpp -O3 -march=native -I./sol2/include -I/usr/include/lua5.4 \
     -o app -lSDL2 -llua5.4 -ldl -lm -std=c++17
 ```
@@ -149,70 +180,61 @@ g++ main.cpp -O3 -march=native -I./sol2/include -I/usr/include/lua5.4 \
 
 ### "SDL2 not found"
 ```bash
-sudo apt install libsdl2-dev  # Ubuntu/Debian
-sudo pacman -S sdl2           # Arch
-brew install sdl2             # macOS
+sudo apt install libsdl2-dev    # Ubuntu/Debian
+sudo pacman -S sdl2             # Arch
+brew install sdl2               # macOS
 ```
 
-### "Lua not found"
+### "Lua not found" 
 ```bash
 sudo apt install liblua5.4-dev  # Ubuntu/Debian
-sudo pacman -S lua54           # Arch  
-brew install lua@5.4           # macOS
+sudo pacman -S lua54            # Arch
+brew install lua@5.4            # macOS
 ```
 
-### "sol2 not found"
+### Build Issues:
 ```bash
-git clone https://github.com/ThePhD/sol2.git
+# Clean and rebuild
+rm -f app embedded_script.h
+./build.sh
 ```
 
 ---
 
-## 🎯 How It Works
+## 🎯 Performance Benefits
 
-1. **Lua Script** → Your graphics code
-2. **Build Process** → Embeds Lua into C++ executable
-3. **SDL2 Backend** → Renders graphics with hardware acceleration
-4. **Standalone EXE** → No dependencies required!
+- **🚀 Faster Startup**: No file I/O - Lua code in memory
+- **⚡ Better Performance**: Eliminated disk access overhead
+- **🔒 Improved Security**: Code cannot be modified post-compilation
+- **📦 Simplified Distribution**: Single executable file
 
 ---
 
 ## 📝 License
 
-MIT License - feel free to use this for your own projects!
+MIT License - free for personal and commercial use!
 
 ---
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`) 
 5. Open a Pull Request
 
 ---
 
-## 📧 Support
+## 💡 Learning Resources
 
-Having issues? 
-- 📋 Open an issue on GitHub
-- 💬 Discuss in discussions
-- 🐛 Check existing issues for solutions
+- [SDL2 Documentation](https://wiki.libsdl.org/)
+- [Lua 5.4 Reference](https://www.lua.org/manual/5.4/)
+- [sol2 Lua-C++ Binding](https://github.com/ThePhD/sol2)
 
 ---
 
 **Happy Coding!** 🚀✨
 
-*Turn your Lua graphics dreams into reality!*
+*Embed your graphics dreams into reality!*
 ```
-
-This README provides:
-- ✅ Clean, professional formatting
-- ✅ Easy-to-follow installation instructions  
-- ✅ Usage examples with code snippets
-- ✅ Troubleshooting section
-- ✅ Technical details for advanced users
-- ✅ Visual hierarchy with emojis and sections
-
-Just save this as `README.md` in your project directory! 🎯
