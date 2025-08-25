@@ -17,11 +17,11 @@ print('const char* EMBEDDED_LUA_SCRIPT =')
 print('"{}";'.format(escaped))
 EOF
 
-# Compile with your specific flags
-g++ main.cpp -I./sol2/include -I/usr/include/lua5.4 -o app -lSDL2 -llua5.4 -ldl -lm -std=c++17
+# Compile ALL source files together with your specific flags
+g++ main.cpp shape.cpp lua_binding.cpp -I./sol2/include -I/usr/include/lua5.4 -o app -lSDL2 -llua5.4 -ldl -lm -std=c++17
 
 if [ $? -eq 0 ]; then
-    echo "Build complete! Executable created successfuly."
+    echo "Build complete! Executable created successfully."
 else
     echo "Build failed!"
     exit 1
