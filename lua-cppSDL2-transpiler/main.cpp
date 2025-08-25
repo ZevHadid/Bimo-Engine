@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <sol/sol.hpp>
+#include "embedded_script.h"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -142,7 +143,7 @@ int main() {
 
     // Run Lua script
     try {
-        lua.script_file("script.lua");
+        lua.script(EMBEDDED_LUA_SCRIPT);
     } catch (const sol::error& e) {
         std::cerr << "Lua error: " << e.what() << std::endl;
         return 1;
