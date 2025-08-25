@@ -1,2 +1,2 @@
-lua-cppSDL2-transpiler/sol2/
-lua-cppSDL2-transpiler/embedded_script.h
+lua-cppSDL2-embedder/sol2/
+lua-cppSDL2-embedder/embedded_script.h
