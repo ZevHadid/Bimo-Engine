@@ -1,10 +1,62 @@
 #include "shape.h"
+#include <SDL2/SDL_stdinc.h>
+#include <algorithm>
+#include <tuple>
+#include <map>
 #include <string>
 #include <sstream>
 #include <cmath>
 
 // Shapes vector definition
 std::vector<Shape> shapes;
+
+// ---------------------- Helper: parse hex code ----------------------
+std::tuple<Uint8, Uint8, Uint8> parseHexColor(const std::string& hex) {
+    unsigned int r = 0, g = 0, b = 0;
+    if (hex.size() == 7 && hex[0] == '#') {
+        std::istringstream(hex.substr(1,2)) >> std::hex >> r;
+        std::istringstream(hex.substr(3,2)) >> std::hex >> g;
+        std::istringstream(hex.substr(5,2)) >> std::hex >> b;
+    }
+    return {static_cast<Uint8>(r), static_cast<Uint8>(g), static_cast<Uint8>(b)};
+}
+
+// ------------------------ Helper: set color ------------------------
+void setColor(Shape& s, const std::string& colorName) {
+    if (!colorName.empty() && colorName[0] == '#') {
+        auto [r, g, b] = parseHexColor(colorName);
+        s.r_col = r;
+        s.g_col = g;
+        s.b_col = b;
+        return;
+    }
+
+    // Lowercase for case-insensitive matching
+    std::string color = colorName;
+    std::transform(color.begin(), color.end(), color.begin(), ::tolower);
+
+    // Named colors map
+    static const std::map<std::string, std::tuple<Uint8, Uint8, Uint8>> colors = {
+        {"blue", {0, 0, 255}},
+        {"red", {255, 0, 0}},
+        {"green", {0, 255, 0}},
+        {"gold", {255, 215, 0}},
+        {"cyan", {0, 255, 255}},      // complementary of red
+        {"magenta", {255, 0, 255}},   // complementary of green
+        {"yellow", {255, 255, 0}},    // complementary of blue
+        {"black", {0, 0, 0}}
+    };
+
+    auto it = colors.find(color);
+    if (it != colors.end()) {
+        std::tie(s.r_col, s.g_col, s.b_col) = it->second;
+    } else {
+        // fallback white
+        s.r_col = 255;
+        s.g_col = 255;
+        s.b_col = 255;
+    }
+}
 
 // ---------------------- Helper: parse simple SVG ----------------------
 Shape parseSVG(const std::string &svg) {
@@ -25,10 +77,7 @@ Shape parseSVG(const std::string &svg) {
         size_t fill_pos = svg.find("fill=\"");
         if(fill_pos != std::string::npos){
             std::string color = svg.substr(fill_pos+6, svg.find("\"", fill_pos+6)-fill_pos-6);
-            if(color == "blue") s.r_col=0, s.g_col=0, s.b_col=255;
-            else if(color == "red") s.r_col=255, s.g_col=0, s.b_col=0;
-            else if(color == "green") s.r_col=0, s.g_col=255, s.b_col=0;
-            else if(color == "gold") s.r_col=255, s.g_col=215, s.b_col=0;
+            setColor(s, color);
         }
     }
     else if(svg.find("<circle") != std::string::npos){
@@ -44,10 +93,7 @@ Shape parseSVG(const std::string &svg) {
         size_t fill_pos = svg.find("fill=\"");
         if(fill_pos != std::string::npos){
             std::string color = svg.substr(fill_pos+6, svg.find("\"", fill_pos+6)-fill_pos-6);
-            if(color == "blue") s.r_col=0, s.g_col=0, s.b_col=255;
-            else if(color == "red") s.r_col=255, s.g_col=0, s.b_col=0;
-            else if(color == "green") s.r_col=0, s.g_col=255, s.b_col=0;
-            else if(color == "gold") s.r_col=255, s.g_col=215, s.b_col=0;
+            setColor(s, color);
         }
     }
     else if(svg.find("<line") != std::string::npos){
@@ -68,9 +114,7 @@ Shape parseSVG(const std::string &svg) {
         size_t stroke_pos = svg.find("stroke=\"");
         if(stroke_pos != std::string::npos){
             std::string color = svg.substr(stroke_pos+8, svg.find("\"", stroke_pos+8)-stroke_pos-8);
-            if(color == "blue") s.r_col=0, s.g_col=0, s.b_col=255;
-            else if(color == "red") s.r_col=255, s.g_col=0, s.b_col=0;
-            else if(color == "green") s.r_col=0, s.g_col=255, s.b_col=0;
+            setColor(s, color);
         }
     }
     else if(svg.find("<polygon") != std::string::npos){
@@ -88,12 +132,8 @@ Shape parseSVG(const std::string &svg) {
         size_t fill_pos = svg.find("fill=\"");
         if(fill_pos != std::string::npos){
             std::string color = svg.substr(fill_pos+6, svg.find("\"", fill_pos+6)-fill_pos-6);
-            if(color == "blue") s.r_col=0, s.g_col=0, s.b_col=255;
-            else if(color == "red") s.r_col=255, s.g_col=0, s.b_col=0;
-            else if(color == "green") s.r_col=0, s.g_col=255, s.b_col=0;
-            else if(color == "gold") s.r_col=255, s.g_col=215, s.b_col=0;
+            setColor(s, color);
         }
     }
     return s;
 }
-
