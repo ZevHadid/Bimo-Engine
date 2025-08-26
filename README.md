@@ -51,7 +51,7 @@ git clone https://github.com/ThePhD/sol2.git
 -- Create a red rectangle
 rect = MakeShape('<rect x="300" y="250" width="200" height="100" fill="red"/>')
 
--- Create a blue circle  
+-- Create a blue circle
 circle = MakeShape('<circle cx="400" cy="300" r="50" fill="blue"/>')
 
 -- Show the shapes
@@ -186,7 +186,7 @@ sudo pacman -S sdl2             # Arch
 brew install sdl2               # macOS
 ```
 
-### "Lua not found" 
+### "Lua not found"
 ```bash
 sudo apt install liblua5.4-dev  # Ubuntu/Debian
 sudo pacman -S lua54            # Arch
@@ -222,7 +222,7 @@ MIT License - free for personal and commercial use!
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`) 
+4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
 ---
@@ -232,4 +232,3 @@ MIT License - free for personal and commercial use!
 - [SDL2 Documentation](https://wiki.libsdl.org/)
 - [Lua 5.4 Reference](https://www.lua.org/manual/5.4/)
 - [sol2 Lua-C++ Binding](https://github.com/ThePhD/sol2)
-
