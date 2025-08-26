@@ -1,2 +1,3 @@
-lua-cppSDL2-embedder/sol2/
-lua-cppSDL2-embedder/embedded_script.h
+sol2/
+embedded_script.h
+app

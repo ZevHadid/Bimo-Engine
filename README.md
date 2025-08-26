@@ -231,3 +231,4 @@ MIT License - free for personal and commercial use!
 - [SDL2 Documentation](https://wiki.libsdl.org/)
 - [Lua 5.4 Reference](https://www.lua.org/manual/5.4/)
 - [sol2 Lua-C++ Binding](https://github.com/ThePhD/sol2)
+
