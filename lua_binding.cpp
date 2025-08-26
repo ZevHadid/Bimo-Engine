@@ -9,10 +9,14 @@ MakeShape::MakeShape(const std::string& svg) {
 void MakeShape::show() { shapes[id].visible = true; }
 void MakeShape::hide() { shapes[id].visible = false; }
 
+void MakeShape::color(const std::string& color) { setColor(shapes[id], color); }
+
 void registerLuaBindings(sol::state& lua) {
     lua.new_usertype<MakeShape>("MakeShape",
         sol::call_constructor, sol::constructors<MakeShape(const std::string&)>(),
         "show", &MakeShape::show,
-        "hide", &MakeShape::hide
+        "hide", &MakeShape::hide,
+
+        "color", &MakeShape::color
     );
 }

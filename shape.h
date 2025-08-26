@@ -15,3 +15,6 @@ struct Shape {
 extern std::vector<Shape> shapes;
 
 Shape parseSVG(const std::string &svg);
+
+std::tuple<Uint8, Uint8, Uint8> parseHexColor(const std::string& hex);
+void setColor(Shape& s, const std::string& colorName);

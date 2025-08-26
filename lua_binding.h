@@ -8,6 +8,8 @@ public:
     MakeShape(const std::string& svg);
     void show();
     void hide();
+
+    void color(const std::string& color);
 };
 
 void registerLuaBindings(sol::state& lua);
