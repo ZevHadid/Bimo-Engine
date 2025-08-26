@@ -12,6 +12,6 @@ struct Shape {
     bool visible = false;
 };
 
-extern std::vector<Shape> shapes; // Declaration
+extern std::vector<Shape> shapes;
 
 Shape parseSVG(const std::string &svg);
