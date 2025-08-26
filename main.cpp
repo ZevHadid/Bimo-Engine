@@ -65,7 +65,7 @@ int main() {
                     SDL_RenderDrawLines(ren, s.points.data(), s.points.size());
                     // Close the polygon by drawing a line from last to first point
                     if (s.points.size() > 1) {
-                        SDL_RenderDrawLine(ren, 
+                        SDL_RenderDrawLine(ren,
                             s.points.back().x, s.points.back().y,
                             s.points.front().x, s.points.front().y);
                     }
