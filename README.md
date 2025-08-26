@@ -1,4 +1,5 @@
-# 🎮 Lua → SDL2 Graphics Embedder
+# 🎮 Bimo ENgine
+## Lua → SDL2 Graphics Embedder
 
 **Embed Lua scripts directly into high-performance SDL2 applications!** Write your graphics in Lua and compile to standalone native executables with no external dependencies.
 
@@ -36,7 +37,7 @@ brew update && brew install gcc sdl2 lua@5.4 python git
 
 ### 2. Get the Code
 ```bash
-git clone https://github.com/ZevHadid/zev-game-maker.git
+git clone https://github.com/ZevHadid/Bimo-Engine.git
 cd lua-cppSDL2-embedder
 ```
 
@@ -146,7 +147,7 @@ shape:hide()  -- Hide shape
 ## 📁 Project Structure
 
 ```
-lua-cppSDL2-embedder/
+Bimo-Engine/
 ├── main.cpp              # Main C++ application
 ├── build.sh              # Build script (embeds + compiles)
 ├── script.lua            # Your graphics script (edit this!)
