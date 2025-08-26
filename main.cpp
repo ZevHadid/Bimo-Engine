@@ -14,11 +14,7 @@ int main() {
     lua.open_libraries(sol::lib::base, sol::lib::package);
 
     // Register C++ class for Lua - CORRECTED WAY
-    lua.new_usertype<MakeShape>("MakeShape",
-        sol::call_constructor, sol::constructors<MakeShape(const std::string&)>(),
-        "show", &MakeShape::show,
-        "hide", &MakeShape::hide
-    );
+    registerLuaBindings(lua);
 
     // Run Lua script
     try {
