@@ -38,7 +38,7 @@ brew update && brew install gcc sdl2 lua@5.4 python git
 ### 2. Get the Code
 ```bash
 git clone https://github.com/ZevHadid/Bimo-Engine.git
-cd lua-cppSDL2-embedder
+cd Bimo-Engine
 ```
 
 ### 3. Install sol2 (Header-only Library)
