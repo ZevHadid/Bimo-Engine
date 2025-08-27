@@ -8,7 +8,7 @@ circle:show()
 
 -- Star polygon
 star = MakeShape(
-'<polygon points="400,100 420,140 460,140 430,170 440,210 400,190 360,210 370,170 340,140 380,140" fill="gold"/>')
+    '<polygon points="400,100 420,140 460,140 430,170 440,210 400,190 360,210 370,170 340,140 380,140" fill="gold"/>')
 
 
 star:show()
