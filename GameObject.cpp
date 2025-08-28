@@ -6,46 +6,22 @@
 
 namespace fs = std::filesystem;
 
-GameObject::GameObject(const std::string& image_path, SDL_Renderer* renderer, const std::string& base_dir)
-    : visible(true), renderer(renderer) {
+GameObject::GameObject(SDL_Texture* texture, SDL_Renderer* renderer)
+    : visible(true), renderer(renderer), texture(texture) {
 
-    // SIMPLE: Just use base_dir + image_path exactly as provided
-    fs::path full_path = fs::path(base_dir) / image_path;
-    std::cout << "Loading image from: " << full_path << std::endl;
-
-    // Check if the resolved path exists
-    if (!fs::exists(full_path)) {
-        // Get the absolute path for better error message
-        fs::path absolute_path = fs::absolute(full_path);
-        std::cerr << "ERROR: File does not exist: " << absolute_path << std::endl;
-
-        // Show what directory we're relative to
-        std::cerr << "Script directory: " << fs::absolute(base_dir) << std::endl;
-        std::cerr << "Requested path: " << image_path << std::endl;
-        return;
+    if (!renderer) {
+        throw std::runtime_error("Renderer is null");
     }
-
-    SDL_Surface* surface = IMG_Load(full_path.c_str());
-    if (!surface) {
-        std::cerr << "IMG_Load Error: " << IMG_GetError() << std::endl;
-        return;
-    }
-
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
 
     if (!texture) {
-        std::cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << std::endl;
-    } else {
-        std::cout << "Successfully loaded: " << full_path << std::endl;
-        SDL_QueryTexture(texture, NULL, NULL, &original_width, &original_height);
+        throw std::runtime_error("Texture is null");
     }
+
+    SDL_QueryTexture(texture, NULL, NULL, &original_width, &original_height);
 }
 
 GameObject::~GameObject() {
-    if (texture) {
-        SDL_DestroyTexture(texture);
-    }
+    // Textures are managed by GameEngine's cache, so we don't destroy them here
 }
 
 void GameObject::show() { visible = true; }
@@ -53,22 +29,75 @@ void GameObject::hide() { visible = false; }
 bool GameObject::is_visible() const { return visible; }
 
 void GameObject::location(float x_percent, float y_percent) {
+    if (is_delayed_flag) return;
+
+    x_percent = std::clamp(x_percent, 0.0f, 100.0f);
+    y_percent = std::clamp(y_percent, 0.0f, 100.0f);
     base_loc_x = x_percent;
     base_loc_y = y_percent;
 }
 
 void GameObject::scale(float size_percent) {
-    base_scale_percent = size_percent;
+    if (is_delayed_flag) return;
+
+    base_scale_percent = std::max(0.0f, size_percent);
 }
 
-void GameObject::render(int window_width, int window_height) {
+void GameObject::set_scale_mode(ScaleMode mode) {
+    if (is_delayed_flag) return;
+
+    scale_mode = mode;
+}
+
+void GameObject::set_depth(int depth) {
+    if (is_delayed_flag) return;
+
+    this->depth = depth;
+}
+
+int GameObject::get_depth() const {
+    return depth;
+}
+
+void GameObject::delay(int milliseconds) {
+    delay_end_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(milliseconds);
+    is_delayed_flag = true;
+}
+
+bool GameObject::is_delayed() const {
+    return is_delayed_flag;
+}
+
+void GameObject::update(float delta_time) {
+    if (is_delayed_flag) {
+        if (std::chrono::steady_clock::now() >= delay_end_time) {
+            is_delayed_flag = false;
+        }
+    }
+}
+
+void GameObject::render(int window_width, int window_height, bool show_debug) {
     if (visible && texture) {
         // Calculate scale factors
         float scale_x = static_cast<float>(window_width) / REFERENCE_WIDTH;
         float scale_y = static_cast<float>(window_height) / REFERENCE_HEIGHT;
 
-        // Only scale if both dimensions increased proportionally
-        float scale_factor = std::min(scale_x, scale_y);
+        float scale_factor;
+        switch (scale_mode) {
+            case ScaleMode::Stretch:
+                scale_factor = std::max(scale_x, scale_y);
+                break;
+            case ScaleMode::Crop:
+                scale_factor = std::min(scale_x, scale_y);
+                break;
+            case ScaleMode::None:
+                scale_factor = 1.0f;
+                break;
+            case ScaleMode::MaintainAspectRatio:
+            default:
+                scale_factor = std::min(scale_x, scale_y);
+                break;
+        }
 
         // If window is smaller than reference, don't scale down (clamp at 1.0)
         scale_factor = std::max(scale_factor, 1.0f);
@@ -99,5 +128,18 @@ void GameObject::render(int window_width, int window_height) {
 
         SDL_Rect dstrect = {pixel_x, pixel_y, pixel_width, pixel_height};
         SDL_RenderCopy(renderer, texture, nullptr, &dstrect);
+
+        if (show_debug) {
+            // Draw bounding box
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            SDL_RenderDrawRect(renderer, &dstrect);
+
+            // Draw delay status
+            if (is_delayed_flag) {
+                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+                SDL_Rect delay_rect = {pixel_x, pixel_y - 5, 10, 5};
+                SDL_RenderFillRect(renderer, &delay_rect);
+            }
+        }
     }
 }
