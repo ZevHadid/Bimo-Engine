@@ -1,6 +1,12 @@
 -- move_block.lua
 game_title("Move Block with Arrow Keys")
 
+-- Create a background
+local background = MakeObject("../assets/images/bg.jpg")
+background:location(50, 50) -- Center of screen
+background:scale(150)       -- 150% of window size
+background:show()
+
 -- Create a block
 local block = MakeObject("../assets/images/green_block.jpg")
 block:location(50, 50) -- Center of screen
@@ -15,16 +21,16 @@ function update(delta_time)
     local move_amount = move_speed * delta_time
 
     -- Check arrow keys and update position
-    if is_key_pressed("right") then
+    if is_key_pressed("right") or is_key_pressed("d") then
         block_x = block_x + move_amount
     end
-    if is_key_pressed("left") then
+    if is_key_pressed("left") or is_key_pressed("a") then
         block_x = block_x - move_amount
     end
-    if is_key_pressed("down") then
+    if is_key_pressed("down") or is_key_pressed("s") then
         block_y = block_y + move_amount
     end
-    if is_key_pressed("up") then
+    if is_key_pressed("up") or is_key_pressed("w") then
         block_y = block_y - move_amount
     end
 
