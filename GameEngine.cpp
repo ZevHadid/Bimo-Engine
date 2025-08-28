@@ -47,7 +47,7 @@ bool GameEngine::initialize() {
         return false;
     }
 
-    lua.open_libraries(sol::lib::base);
+    lua.open_libraries(sol::lib::base, sol::lib::table, sol::lib::math, sol::lib::string);
     setup_lua_bindings();
 
     return true;
@@ -126,11 +126,29 @@ void GameEngine::setup_lua_bindings() {
         return ptr;
     });
 
+    // Replace the is_key_pressed function with this simpler version:
     lua.set_function("is_key_pressed", [&](const std::string& key) {
         const Uint8* state = SDL_GetKeyboardState(NULL);
+
+        static const std::unordered_map<std::string, SDL_Scancode> key_map = {
+            {"up", SDL_SCANCODE_UP}, {"down", SDL_SCANCODE_DOWN},
+            {"left", SDL_SCANCODE_LEFT}, {"right", SDL_SCANCODE_RIGHT},
+            {"w", SDL_SCANCODE_W}, {"a", SDL_SCANCODE_A},
+            {"s", SDL_SCANCODE_S}, {"d", SDL_SCANCODE_D},
+            {"space", SDL_SCANCODE_SPACE}, {"enter", SDL_SCANCODE_RETURN},
+            {"escape", SDL_SCANCODE_ESCAPE}
+        };
+
+        std::string lower_key = key;
+        std::transform(lower_key.begin(), lower_key.end(), lower_key.begin(), ::tolower);
+
+        auto it = key_map.find(lower_key);
+        if (it != key_map.end()) return state[it->second] != 0;
+
         SDL_Scancode scancode = SDL_GetScancodeFromName(key.c_str());
         return scancode != SDL_SCANCODE_UNKNOWN && state[scancode] != 0;
     });
+
 
     lua.set_function("set_update_function", [&](sol::function func) {
         lua_update_function = func;
@@ -204,6 +222,8 @@ void GameEngine::main_loop() {
     float deltaTime = 0;
 
     while (running) {
+        SDL_PumpEvents(); // ensure keyboard state is updated
+
         LAST = NOW;
         NOW = SDL_GetPerformanceCounter();
         deltaTime = (float)((NOW - LAST) * 1000 / (float)SDL_GetPerformanceFrequency()) * 0.001f;
