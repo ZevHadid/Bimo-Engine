@@ -54,6 +54,10 @@ bool GameEngine::initialize() {
 }
 
 void GameEngine::setup_lua_bindings() {
+    lua.set_function("game_title", [&](const std::string& title) {
+        SDL_SetWindowTitle(window, title.c_str());
+    });
+
     lua.set_function("MakeObject", [&](const std::string& image_path) -> GameObject* {
         auto obj = std::make_unique<GameObject>(image_path, renderer, script_dir);
         GameObject* ptr = obj.get();
