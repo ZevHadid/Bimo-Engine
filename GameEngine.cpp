@@ -130,6 +130,10 @@ void GameEngine::setup_lua_bindings() {
     lua.set_function("is_key_pressed", [&](const std::string& key) {
         const Uint8* state = SDL_GetKeyboardState(NULL);
 
+        if (show_debug) {
+            std::cout << "is_key_pressed: " << key << std::endl;
+        }
+
         static const std::unordered_map<std::string, SDL_Scancode> key_map = {
             {"up", SDL_SCANCODE_UP}, {"down", SDL_SCANCODE_DOWN},
             {"left", SDL_SCANCODE_LEFT}, {"right", SDL_SCANCODE_RIGHT},
@@ -143,9 +147,18 @@ void GameEngine::setup_lua_bindings() {
         std::transform(lower_key.begin(), lower_key.end(), lower_key.begin(), ::tolower);
 
         auto it = key_map.find(lower_key);
-        if (it != key_map.end()) return state[it->second] != 0;
+        if (show_debug && it != key_map.end()) {
+            std::cout << "  found in key_map, scancode: " << it->second << ", state: " << (int)state[it->second] << std::endl;
+            return state[it->second] != 0;
+        }
 
         SDL_Scancode scancode = SDL_GetScancodeFromName(key.c_str());
+
+        if (show_debug) {
+            std::cout << "  not in key_map, scancode from name: " << scancode << ", state: " << (int)state[scancode] << std::endl;
+
+        }
+
         return scancode != SDL_SCANCODE_UNKNOWN && state[scancode] != 0;
     });
 
