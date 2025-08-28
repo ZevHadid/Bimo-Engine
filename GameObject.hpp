@@ -14,9 +14,8 @@ public:
     bool is_visible() const;
     void render(int window_width, int window_height);
 
-    // Simple coordinate methods
-    void location(float x_percent, float y_percent);  // 0-100% from top-left
-    void scale(float size_percent);  // 0-100% of window's smaller dimension
+    void location(float x_percent, float y_percent);
+    void scale(float size_percent);
 
 private:
     SDL_Texture* texture = nullptr;
@@ -25,8 +24,12 @@ private:
     int original_width = 0;
     int original_height = 0;
 
-    // Position and scale properties
-    float loc_x = 50.0f;    // 50% from left (center)
-    float loc_y = 50.0f;    // 50% from top (center)
-    float scale_percent = 20.0f; // 20% of window size
+    // Base properties (for reference window size)
+    float base_loc_x = 50.0f;
+    float base_loc_y = 50.0f;
+    float base_scale_percent = 20.0f;
+
+    // Reference window size (what we designed for)
+    static const int REFERENCE_WIDTH = 800;
+    static const int REFERENCE_HEIGHT = 600;
 };
