@@ -1,6 +1,6 @@
-# Bimo-Engine
+Bimo Engine: Lua-C++ Bindings with Sol2
 
-A minimal Lua-scriptable game engine built with C++, SDL2, and Sol2. Write your game logic in Lua while the engine handles the heavy lifting.
+Welcome to the Bimo Engine! This module provides Lua scripting capabilities for the Bimo game engine, enabling you to control game objects and logic using Lua scripts.
 
 ## Features
 
