@@ -32,6 +32,10 @@ public:
     void delay(int milliseconds);
     bool is_delayed() const;
 
+    static void set_reference_dimensions(int width, int height);
+    static int get_reference_width();
+    static int get_reference_height();
+
 private:
     SDL_Texture* texture = nullptr;
     SDL_Renderer* renderer;
@@ -51,6 +55,6 @@ private:
     float base_scale_percent = 20.0f;
 
     // Reference window size (what we designed for)
-    static const int REFERENCE_WIDTH = 800;
-    static const int REFERENCE_HEIGHT = 600;
+    static int REFERENCE_WIDTH;
+    static int REFERENCE_HEIGHT;
 };

@@ -109,6 +109,21 @@ void GameEngine::setup_lua_bindings() {
         SDL_SetWindowTitle(window, title.c_str());
     });
 
+    lua.set_function("set_reference_dimensions", [&](int width, int height) {
+        if (width > 0 && height > 0) {
+            GameObject::set_reference_dimensions(width, height);
+            std::cout << "Reference dimensions set to: " << width << "x" << height << std::endl;
+        }
+    });
+
+    lua.set_function("get_reference_width", [&]() {
+        return GameObject::get_reference_width();
+    });
+
+    lua.set_function("get_reference_height", [&]() {
+        return GameObject::get_reference_height();
+    });
+
     lua.set_function("set_debug", [&](bool debug) {
         show_debug = debug;
     });

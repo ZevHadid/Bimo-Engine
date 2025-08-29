@@ -6,6 +6,9 @@
 
 namespace fs = std::filesystem;
 
+int GameObject::REFERENCE_WIDTH = 800;
+int GameObject::REFERENCE_HEIGHT = 600;
+
 GameObject::GameObject(SDL_Texture* texture, SDL_Renderer* renderer)
     : visible(true), renderer(renderer), texture(texture) {
 
@@ -27,6 +30,21 @@ GameObject::~GameObject() {
 void GameObject::show() { visible = true; }
 void GameObject::hide() { visible = false; }
 bool GameObject::is_visible() const { return visible; }
+
+void GameObject::set_reference_dimensions(int width, int height) {
+    if (width > 0 && height > 0) {
+        REFERENCE_WIDTH = width;
+        REFERENCE_HEIGHT = height;
+    }
+}
+
+int GameObject::get_reference_width() {
+    return REFERENCE_WIDTH;
+}
+
+int GameObject::get_reference_height() {
+    return REFERENCE_HEIGHT;
+}
 
 void GameObject::location(float x_percent, float y_percent) {
     if (is_delayed_flag) return;

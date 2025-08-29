@@ -1,6 +1,8 @@
 -- move_block.lua
 game_title("Move Block with Arrow Keys")
 
+set_reference_dimensions(1800, 1600)
+
 -- Create a background
 local background = MakeObject("../assets/images/bg.jpg")
 background:location(50, 50) -- Center of screen
