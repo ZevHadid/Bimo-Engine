@@ -7,6 +7,7 @@ Welcome to the Bimo Engine! This module provides Lua scripting capabilities for 
 - **Lua Scripting**: Control game objects and logic with simple Lua scripts
 - **Simple API**: Easy-to-use `MakeObject()`, `location()`, `scale()`, and `delay()` functions
 - **Resolution Independent**: Objects maintain position and scale across window sizes
+- **Reference Dimension Control**: Customize the design resolution for your game
 - **No Image Warping**: Aspect ratios are preserved automatically
 - **Cross-Platform**: Built on SDL2 for multi-platform support
 - **Texture Caching**: Automatic texture management and reuse
@@ -56,6 +57,18 @@ if obj1:check_collision(obj2) then
 end
 
 bounds = obj:get_bounds()  -- Get SDL_Rect of object bounds
+```
+
+### Reference Dimension Control
+```
+-- Set custom design resolution (default: 800x600)
+set_reference_dimensions(1920, 1080)  -- Design for 1080p
+set_reference_dimensions(1280, 720)   -- Design for 720p
+
+-- Get current reference dimensions
+width = get_reference_width()
+height = get_reference_height()
+print("Designing for: " .. width .. "x" .. height)
 ```
 
 ### Input Handling
@@ -189,22 +202,28 @@ Bimo-Engine/
 - Objects are centered on their location coordinates
 - Automatically adjusts for window resizing
 
-### 2. Scaling System
+### 2. Reference Dimensions
+- Design Canvas: Set your preferred design resolution
+- Aspect Ratio Anchor: All positioning and scaling based on reference size
+- Flexible: Change resolution at runtime for different display needs
+- Default: 800x600 (perfect for retro-style games)
+
+### 3. Scaling System
 - `scale(size)`: Percentage of window size (0-100)
 - Maintains original aspect ratio by default
 - Multiple scale modes available for different behaviors
 
-### 3. Texture Management
+### 4. Texture Management
 - Automatic caching - same image only loaded once
 - Memory management handled by engine
 - Supports PNG, JPG, and other SDL_image formats
 
-### 4. Rendering Pipeline
+### 5. Rendering Pipeline
 - Depth-based rendering order (`set_depth()`)
 - Debug visualization with bounding boxes (F3 toggle)
 - Resolution-independent positioning
 
-### 5. Collision Detection
+### 6. Collision Detection
 - Axis-Aligned Bounding Box (AABB) collision
 - `check_collision()` method between objects
 - `get_bounds()` to retrieve object boundaries
