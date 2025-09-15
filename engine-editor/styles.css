@@ -91,6 +91,33 @@ button {
   margin-right: 5px;
 }
 
+.editor-container {
+    display: flex;
+    height: 100vh;
+}
+
+.file-tree {
+    width: 200px;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.editor {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor textarea {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 10px;
+    font-family: monospace;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
