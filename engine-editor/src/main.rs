@@ -1,4 +1,6 @@
 mod app;
+mod editor;
+mod home;
 
 use app::*;
 use leptos::prelude::*;
