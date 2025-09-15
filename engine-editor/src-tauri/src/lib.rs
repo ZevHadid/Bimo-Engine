@@ -1,40 +1,14 @@
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
-
-use tauri::Manager;
-use std::fs;
-use std::path::Path;
-
-
-
+// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
-fn create_project_dir(base_dir: String, project_name: String) -> Result<String, String> {
-    let full_path = Path::new(&base_dir).join(&project_name);
-
-    if full_path.exists() {
-        return Err("Directory already exists".into());
-    }
-
-    fs::create_dir_all(&full_path).map_err(|e| e.to_string())?;
-
-    Ok(full_path.to_string_lossy().to_string())
+fn greet(name: &str) -> String {
+    format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
-
-
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .setup(|app| {
-            if cfg!(debug_assertions) {
-                app.handle().plugin(
-                    tauri_plugin_log::Builder::default()
-                        .level(log::LevelFilter::Info)
-                        .build(),
-                )?;
-            }
-            Ok(())
-        })
-        .invoke_handler(tauri::generate_handler![create_project_dir])
+        .plugin(tauri_plugin_opener::init())
+        .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
