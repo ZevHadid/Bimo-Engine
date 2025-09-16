@@ -3,7 +3,7 @@ mod editor;
 mod home;
 
 use app::*;
-use leptos::prelude::*;
+use leptos::*;
 
 fn main() {
     console_error_panic_hook::set_once();

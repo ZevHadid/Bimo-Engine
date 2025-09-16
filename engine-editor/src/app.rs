@@ -1,6 +1,6 @@
 use crate::editor::Editor;
 use crate::home::Home;
-use leptos::prelude::*;
+use leptos::*;
 use leptos_router::*;
 
 #[component]

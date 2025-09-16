@@ -1,10 +1,11 @@
-use leptos::ev::event_target_value;
-use leptos::prelude::*;
+use leptos::*;
 use leptos_router::use_query_map;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
-use std::path::Path;
+use wasm_bindgen_futures::spawn_local;
+use js_sys;
+use web_sys;
 
 #[wasm_bindgen]
 extern "C" {
@@ -42,6 +43,7 @@ pub fn Editor() -> impl IntoView {
         query.with(|q| {
             q.get("path")
                 .and_then(|p| js_sys::decode_uri_component(p).ok())
+                .and_then(|js_str| js_str.as_string())
                 .unwrap_or_default()
         })
     };
@@ -51,10 +53,10 @@ pub fn Editor() -> impl IntoView {
     let (file_content, set_file_content) = create_signal(String::new());
 
     create_effect(move |_| {
-        let p = path();
-        if !p.is_empty() {
+        let current_path = path();
+        if !current_path.is_empty() {
             spawn_local(async move {
-                let args = serde_wasm_bindgen::to_value(&ReadDirArgs { path: &p }).unwrap();
+                let args = serde_wasm_bindgen::to_value(&ReadDirArgs { path: &current_path }).unwrap();
                 let result = invoke("read_dir", args).await;
                 match serde_wasm_bindgen::from_value(result) {
                     Ok(files_val) => set_files.set(files_val),
@@ -97,10 +99,19 @@ pub fn Editor() -> impl IntoView {
         }
     };
 
+    let handle_input = move |ev: web_sys::Event| {
+        let target: web_sys::EventTarget = event_target(&ev);
+        if let Ok(textarea) = target.dyn_into::<web_sys::HtmlTextAreaElement>() {
+            set_file_content.set(textarea.value());
+        }
+    };
+
+    let path_string = move || path();
+
     view! {
         <div class="editor-container">
             <div class="file-tree">
-                <h3>{ path }</h3>
+                <h3>{ path_string }</h3>
                 <ul>
                     {move || {
                         files.get().into_iter().map(|f| {
@@ -115,7 +126,7 @@ pub fn Editor() -> impl IntoView {
             <div class="editor">
                 <textarea
                     on:keydown=on_save
-                    on:input=move |ev| set_file_content.set(event_target_value(&ev))
+                    on:input=handle_input
                     prop:value=move || file_content.get()
                 ></textarea>
             </div>

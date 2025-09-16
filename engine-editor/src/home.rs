@@ -1,8 +1,8 @@
-use leptos::prelude::*;
-use leptos::task::spawn_local;
+use leptos::*;
 use leptos_router::{use_navigate, NavigateOptions};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
+use wasm_bindgen_futures::spawn_local;
 
 #[wasm_bindgen]
 extern "C" {
@@ -14,16 +14,20 @@ extern "C" {
 pub fn Home() -> impl IntoView {
     let navigate = use_navigate();
 
-    let open_project = move |_| {
-        spawn_local(async move {
-            let result = invoke("open_project", JsValue::NULL).await;
-            if !result.is_null() && !result.is_undefined() {
-                if let Some(path) = result.as_string() {
-                    let encoded_path = js_sys::encode_uri_component(&path);
-                    navigate(&format!("/editor?path={}", encoded_path), Default::default());
+    let open_project = {
+        let navigate = navigate.clone();
+        move |_| {
+            let navigate = navigate.clone();
+            spawn_local(async move {
+                let result = invoke("open_project", JsValue::NULL).await;
+                if !result.is_null() && !result.is_undefined() {
+                    if let Some(path) = result.as_string() {
+                        let encoded_path = js_sys::encode_uri_component(&path);
+                        navigate(&format!("/editor?path={}", encoded_path), NavigateOptions::default());
+                    }
                 }
-            }
-        });
+            });
+        }
     };
 
     view! {
